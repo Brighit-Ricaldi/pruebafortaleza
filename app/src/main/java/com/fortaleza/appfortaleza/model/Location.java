@@ -1,35 +1,54 @@
-package com.fortaleza.appfortaleza;
+package com.fortaleza.appfortaleza.model;
 
-public class Marcadores {
-
-    private double latitud;
-    private double longitud;
+public class Location {
+    private String id;
+    private String latitud;
+    private String longitud;
     private String razon_social;
     private String telefono;
-    private String celular;
     private String email;
     private String nombre_apellidos;
     private String representante_cargo;
     private String ruc;
 
 
-    public Marcadores(){
+    public Location(){
 
     }
 
-    public double getLatitud() {
+    public Location(String id, String latitud, String longitud, String razon_social, String telefono, String email, String nombre_apellidos, String representante_cargo, String ruc) {
+        this.id = id;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.razon_social = razon_social;
+        this.telefono = telefono;
+        this.email = email;
+        this.nombre_apellidos = nombre_apellidos;
+        this.representante_cargo = representante_cargo;
+        this.ruc = ruc;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLatitud() {
         return latitud;
     }
 
-    public void setLatitud(double latitud) {
+    public void setLatitud(String latitud) {
         this.latitud = latitud;
     }
 
-    public double getLongitud() {
+    public String getLongitud() {
         return longitud;
     }
 
-    public void setLongitud(double longitud) {
+    public void setLongitud(String longitud) {
         this.longitud = longitud;
     }
 
@@ -71,14 +90,6 @@ public class Marcadores {
 
     public void setRepresentante_cargo(String representante_cargo) {
         this.representante_cargo = representante_cargo;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public void setCelular(String celular) {
-        this.celular = celular;
     }
 
     public String getRuc() {

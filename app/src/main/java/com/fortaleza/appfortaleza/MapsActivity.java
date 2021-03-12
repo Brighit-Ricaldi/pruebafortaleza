@@ -5,10 +5,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -31,21 +36,26 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener  {
 
     private GoogleMap mMap;
-    private BottomSheetBehavior mBottomSheetBehavior1;
+    private BottomSheetBehavior mBottomSheetBehavior;
     private View bottomSheet;
+    View tapactionlayout;
+    private ImageButton button;
     private DatabaseReference databaseReference;
 
     private ArrayList<Marker>tmpRealTimemarker = new ArrayList<>();
 
     private ArrayList<Marker> realTimeMarker = new ArrayList<>();
+    TextView txtrazon_zocial, txttelefono, txtHorario;
+
 
 
     //Geolocalizacion
     SupportMapFragment supportMapFragment;
     FusedLocationProviderClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +68,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
+        txtrazon_zocial = (TextView) findViewById(R.id.txtRazonSocial);
+        txttelefono = (TextView) findViewById(R.id.txtTelefono);
+        button = findViewById(R.id.bt_menu);
 
+
+        
+
+        //GEOLOCALIZAIÓN--------------------------------------------------------------------------------------------------------------------
         //Asignar Variable
+
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         //Ici
         client = LocationServices.getFusedLocationProviderClient(this);
-
+/*
         //Checar permisos
         if (ActivityCompat.checkSelfPermission(MapsActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -78,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(MapsActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
+
 
 
     }
@@ -107,13 +126,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             //Initialize lat lng
                             LatLng latLng = new LatLng(location.getLatitude()
                                     ,location.getLongitude());
+
+
                             //create marker options
+                            //agregar o cambiar el icono de la imagen
                             MarkerOptions options = new MarkerOptions().position(latLng)
                                     .title("Mi Ubicación");
                             //Zoom map
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
                             //Add marker on map
-                            googleMap.addMarker(options);
+                            googleMap.addMarker(new MarkerOptions());
 
                         }
                     });
@@ -130,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //Call method
                 getCurrentLocation();
             }
-        }
+        }*/
     }
 
 
@@ -155,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         //aqui ponemos los marcadores
-        databaseReference.child("prueba").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("locations").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (Marker marker:realTimeMarker){
@@ -166,14 +188,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Double latitud = mk.getLatitud();
                     Double longitud = mk.getLongitud();
+                    String razon_social = mk.getRazon_social();
+                    String telefono = mk.getTelefono();
+                    String celular = mk.getCelular();
+                    String email = mk.getEmail();
+                    String nombre_apellidos = mk.getNombre_apellidos();
+                    String representante_cargo = mk.getRepresentante_cargo();
+                    String ruc = mk.getRuc();
 
-                    MarkerOptions markerOptions = new MarkerOptions();
+                    //Personalizar el tamaño del marcador
+                    int height = 150;
+                    int width = 100;
+
+                    //cambiar o definir la imagen del  marcador
+                    BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_distribuidores);
+                    Bitmap b = bitmapdraw.getBitmap();
+                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+
+
+                    MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(smallMarker)).title(razon_social);
                     markerOptions.position(new LatLng(latitud,longitud));
                     tmpRealTimemarker.add(mMap.addMarker(markerOptions));
 
-                    //cambiamos el icono del marcador
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    LatLng coordinate = new LatLng(latitud,longitud);
+                    //
+
+
                     //CameraUpdate location = CameraUpdateFactory.newLatLngZoom(coordinate, 150);
 
                     ////zoom al mapa}
@@ -188,5 +227,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+    }
+
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        try {
+            Integer clickCount = (Integer) marker.getTag();
+
+        }catch (Exception ex){
+            Marcadores info = new Marcadores();
+            info = (Marcadores) marker.getTag();
+            txtrazon_zocial.setText(info.getRazon_social());
+            txttelefono.setText(info.getTelefono());
+
+
+
+        }
+        return false;
     }
 }

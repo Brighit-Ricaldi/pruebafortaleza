@@ -99,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                             String id = mAuth.getCurrentUser().getUid();
                             saveUser(id, fullname, name, email, phone);
 
+
                         }
                         else{
                             Toast.makeText(RegisterActivity.this, "No se pudo registrar el usuario", Toast.LENGTH_SHORT).show();
@@ -130,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(RegisterActivity.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent( RegisterActivity.this, MainActivity.class);
+                    Intent intent = new Intent( RegisterActivity.this, MapsActivity.class);
                     startActivity(intent);
                     finish();
                 }
